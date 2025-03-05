@@ -10,38 +10,39 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [timerLabel, setTimerLabel] = useState('Session');
   const intervalRef = useRef(null);
-  const timerLabelRef = useRef(timerLabel); // Referência para timerLabel
+  const timerLabelRef = useRef(timerLabel); // timerLabel reference to avoid stale closure
 
-  // Atualize o timerLabelRef sempre que timerLabel mudar
+  // Updates the timerLabelRef whenever timerLabel changes
+  // Freaking headache to fix the label switching bug
   useEffect(() => {
     timerLabelRef.current = timerLabel;
   }, [timerLabel]);
 
-  // Atualize o timeLeft sempre que sessionLength mudar
+  // Updates the timeLeft whenever sessionLength changes
   useEffect(() => {
     setTimeLeft(sessionLength * 60);
   }, [sessionLength]);
 
-  // Função para alternar entre Session e Break
+  // Used to alternate between 'Session' and 'Break' labels
   const switchTimer = () => {
     const audio = document.getElementById('beep');
     audio.play();
 
     if (timerLabelRef.current === 'Session') {
       setTimerLabel('Break');
-      setTimeLeft(breakLength * 60); // Define o tempo para o intervalo
+      setTimeLeft(breakLength * 60);
     } else {
       setTimerLabel('Session');
-      setTimeLeft(sessionLength * 60); // Define o tempo para a sessão
+      setTimeLeft(sessionLength * 60);
     }
   };
 
-  // Função para decrementar o timeLeft
+  // Decrements the timeLeft by 1 second
   const decrementTime = () => {
     setTimeLeft((prevTimeLeft) => {
       if (prevTimeLeft === 0) {
-        switchTimer(); // Alternar entre Session e Break
-        return prevTimeLeft; // Retorna o valor atual para evitar dupla atualização
+        switchTimer();
+        return prevTimeLeft;
       }
       return prevTimeLeft - 1;
     });
@@ -49,16 +50,16 @@ function App() {
 
   const handleStartStop = () => {
     if (isRunning) {
-      clearInterval(intervalRef.current); // Pare o intervalo
+      clearInterval(intervalRef.current);
       setIsRunning(false);
     } else {
       setIsRunning(true);
-      intervalRef.current = setInterval(decrementTime, 1000); // Inicie o intervalo
+      intervalRef.current = setInterval(decrementTime, 1000);
     }
   };
 
   const handleReset = () => {
-    clearInterval(intervalRef.current); // Pare o intervalo
+    clearInterval(intervalRef.current);
     setBreakLength(5);
     setSessionLength(25);
     setTimeLeft(25 * 60);
