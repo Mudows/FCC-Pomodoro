@@ -10,20 +10,16 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [timerLabel, setTimerLabel] = useState('Session');
   const intervalRef = useRef(null);
-  const timerLabelRef = useRef(timerLabel); // timerLabel reference to avoid stale closure
+  const timerLabelRef = useRef(timerLabel);
 
-  // Updates the timerLabelRef whenever timerLabel changes
-  // Freaking headache to fix the label switching bug
   useEffect(() => {
     timerLabelRef.current = timerLabel;
   }, [timerLabel]);
 
-  // Updates the timeLeft whenever sessionLength changes
   useEffect(() => {
     setTimeLeft(sessionLength * 60);
   }, [sessionLength]);
 
-  // Used to alternate between 'Session' and 'Break' labels
   const switchTimer = () => {
     const audio = document.getElementById('beep');
     audio.play();
@@ -37,7 +33,6 @@ function App() {
     }
   };
 
-  // Decrements the timeLeft by 1 second
   const decrementTime = () => {
     setTimeLeft((prevTimeLeft) => {
       if (prevTimeLeft === 0) {
